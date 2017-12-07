@@ -1,6 +1,6 @@
 //-------------------togliere, per la gif
-
-int cont = 0;
+import gifAnimation.*;
+GifMaker gifExport;
 int frames = 0;
 boolean startRec = false;
 int xPlayer = 0;
@@ -53,8 +53,8 @@ Funzione[] funzioniPerY = new Funzione[]{
 
 void setup()
 {
-  //gifExport = new GifMaker(this,"exported.gif",300);
-  //gifExport.setRepeat(0);
+  gifExport = new GifMaker(this,"exported.gif",300);
+  gifExport.setRepeat(0);
   img=loadImage("C:/Users/davide/Desktop/imgtony.jpg");
   imageMode(CENTER);
   size(800,800,OPENGL);
@@ -81,10 +81,14 @@ void setup()
 }
 
 void draw()
-
 {
+  if(startRec && gifExport != null)
+  {
+    gifExport.setDelay(20);
+    gifExport.addFrame();
+    
+  }
   
-  cont++;
   background(0);
   noFill();
   pushMatrix();
@@ -135,9 +139,6 @@ void draw()
   aggiungiPuntoGuida();
   
   popMatrix();
-  
-  if(cont % 5 == 0)
-    saveFrame("pics/out-#####.png");
 }
 
 void aggiungiPuntoGuida()
@@ -247,3 +248,6 @@ class Potenza  extends Funzione
   
   }
 }
+
+
+
