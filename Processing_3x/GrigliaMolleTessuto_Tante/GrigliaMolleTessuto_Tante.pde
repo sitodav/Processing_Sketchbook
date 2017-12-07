@@ -1,3 +1,5 @@
+
+
 class Molla
 {
     PVector chiodo;
@@ -42,7 +44,9 @@ class Molla
    public void disegna(PVector where)
    {
      
-       stroke(0,50);
+       float estens = sqrt(pow(where.x - chiodo.x,2)+pow(where.y-chiodo.y,2));
+       float str =(255 * estens/50.0f);
+       stroke(str,str);
        line(chiodo.x,chiodo.y,where.x,where.y);
        /*ellipseMode(CENTER);
        noStroke();
@@ -135,17 +139,22 @@ class MoverClass
       acc.y *= 0;
       vel.limit(5);
    }
-   public void disegna()
+   public void disegna(boolean highlighted)
    {
       pushMatrix();
         translate(pos.x,pos.y);
-        fill(0);
+        float mag = (vel.x * vel.x + vel.y * vel.y);
+        float fll = 255*(1-mag*mag/25.0f);
+        fill(fll);
         noStroke(); //<>// //<>// //<>// //<>// //<>//
-        //ellipse(0,0,5,5);
-        //stroke(0,0,255,125);
-        //strokeWeight(3.0);
-        //line(0,0,vel.x*50,vel.y*50);
-        
+        ellipse(0,0,5,5);
+        if(highlighted)
+        {   fill(fll,0,0,fll);
+            ellipse(0,0,15,15);
+        }
+        /*stroke(0,0,255,125);
+        strokeWeight(3.0);
+        line(0,0,vel.x*20,vel.y*20);*/
    
         noStroke();
       popMatrix();
@@ -163,28 +172,36 @@ class MoverClass
 
 
 MoverClass[][] movers ;
-int nMoversX = 50;
-int nMoversY = 50;
+int nMoversX = 20;
+int nMoversY = 20;
 
 float kElastMolleBordi;
 float restLenMolleCentralizzata;
 //ArrayList<Molla> molle;
+int cont ;
+int flag ;
+
 
 void setup()
 {
+  
   size(600,600,P2D);
+  
   //molle = new ArrayList<Molla>();
   movers = new MoverClass[nMoversY][nMoversX];
-  float yOff = (float)(height - 40) / nMoversY;
-  float xOff = (float)(width - 40) / nMoversX;
+  int padd = 20;
+  float yOff = (float)(height - 2*padd) / nMoversY;
+  float xOff = (float)(width - 2*padd) / nMoversX;
   kElastMolleBordi = 1.0;
   restLenMolleCentralizzata = xOff;
+  cont = 0;
+  flag = 1;
   
   for(int i=0;i<nMoversY;i++)
   {     
      for(int j=0;j<nMoversX;j++)
      {
-        movers[i][j] = new MoverClass(new PVector(20 + j * xOff + 0.5f * xOff, 20 + i*yOff + 0.5f * yOff),5,30);  
+        movers[i][j] = new MoverClass(new PVector(padd + j * xOff + 0.5f * xOff, padd + i*yOff + 0.5f * yOff),5,30);  
         
      }
   }
@@ -236,20 +253,29 @@ void setup()
   }
   
   
+  
+  
+  
+  
+  
   background(255);
   //mover = new MoverClass(new PVector(width/2+100,height/2+100),5,100); //<>// //<>//
   smooth(); //<>// //<>// //<>// //<>//
    //<>// //<>//
 }
 
+
+
 void draw()
 {
-    if(movers == null) //<>// //<>//
-      return; //<>// //<>// //<>//
     
-    background(255);
-    //fill(255,10);
-    //rect(0,0,width,height);
+      
+    if(movers == null) //<>//
+      return; //<>// //<>//
+    
+    //background(255);
+    fill(255,10);
+    rect(0,0,width,height);
     
     for(MoverClass[] mover : movers)
       for(MoverClass mover2 : mover)
@@ -270,6 +296,8 @@ void draw()
          {
             for(int j=-numElemY;j<=numElemY;j++)
             {  
+               if(abs(i)+abs(j) > 3)
+                 continue;
                PVector f = new PVector(mouseX - movers[yMover+i][xMover+j].pos.x,mouseY-movers[yMover+i][xMover+j].pos.y);
                //System.out.println(f.x+" "+f.y);
                movers[yMover+i][xMover+j].applyForce(new PVector(f.x * 0.8, f.y * 0.8));
@@ -279,12 +307,63 @@ void draw()
     }
 
     
+    /******************************************************FORZA AGGIUNTIVA1*/
+   /* int ti = nMoversY-1,tj = nMoversX-1;
+    ArrayList<PVector> ps = new ArrayList<PVector>();
+    ps.add(new PVector(0,0));
+    while(ti>0 && tj>0) //<>//
+    {
+      float f = random(0,1);
+      PVector l = ps.get(ps.size()-1);
+      if( ti==0 || (f>.8 && tj!=0) )
+
+      {
+          ps.add(new PVector( l.x+1,l.y ));
+          tj--;
+      }
+      else
+      {
+        ps.add(new PVector( l.x,l.y+1 ));
+        ti--;
+      }
+       //<>//
+      
+    }
+    
+    for(PVector el: ps)
+    {
+       movers[(int)el.y][(int)el.x].applyForce(new PVector(random(-10,10),random(-10,10))); 
+       //movers[(int)el.y][(int)el.x].disegna(true);
+    }
+    */ 
+    
+    
+    /***********************************************FORZA AGGIUNTIVA2***/
+    /* 
+    cont += (flag);
+      
+    if(cont == 20 || cont ==0)
+    {
+        flag *= -1;
+    }
+    if(cont % 5 == 0)
+    {
+       kElastMolleBordi += 2*flag ;
+       //System.out.println(kElastMolleBordi);
+    }
+    */
+    
+
+    
     //per ciascun mover, calcolo la forza delle molle che gli sono attaccate, lo muovo (quindi si aggiornano le molle di cui Ã¨ chiodo)
     //e quindi cambieranno anche i movers associati alle molle di cui Ã¨ chiodo
+    
     for(MoverClass[] mover : movers)
     {
+
       for(MoverClass mover2 : mover)
       {
+         
          for(Molla molla : mover2.mollePerMover)
          {
               PVector springForce = molla.computeSpringForce((mover2.pos));
@@ -296,18 +375,15 @@ void draw()
          } 
          
          mover2.update();
-         mover2.disegna();
+         mover2.disegna(false); //<>//
+        
       }
     }
     
-    pushMatrix();
-        translate(width/2 - 160, height - 20);
-        noStroke();
-        fill(0,255,0);
-        text("UP/DOWN ARROW TO CHANGE BORDER TENSION",0,0);
-        translate(0,20);
-        text("PRESS MOUSE TO MAKE THE SPHERES FOLLOW THE MOUSE", 0,0);
-    popMatrix();
+    
+    
+    
+         
      
     
     stroke(0);
@@ -323,13 +399,13 @@ void keyPressed()
    {
       if(kElastMolleBordi > 8.0)
         return;
-      kElastMolleBordi+=0.1;
+      kElastMolleBordi+=1.2;
    }
    else if(keyCode == DOWN)
    {
       if(kElastMolleBordi < - 0.5)
         return;
-      kElastMolleBordi -= 0.1; 
+      kElastMolleBordi -= 1.2; 
    }
    else if(key == 'k')
    {
@@ -338,7 +414,101 @@ void keyPressed()
          molla.kElast *=2;
       }
    }
+   System.out.println(kElastMolleBordi);
 }
+
+
+
+/***routine per image processing ***********************************************/
+
+void rgb2Gray(PImage img) //used to store in each of the three channels of a PImage, the same value obtained as the mean of the 3 original channels (R+G+B)/3
+{
+  img.loadPixels();
+  for(int i=0;i<img.width*img.height;i++)
+   {
+      int iR = i / img.width;
+      int iC = i % img.width;
+      color c= img.get(iC,iR);
+      float red = red(c);
+      float green = green(c);
+      float blue = blue(c);
+      float v = 0.3333 * (red+green+blue);
+      img.pixels[i] = color(v,v,v);
+   }
+   img.updatePixels();
+}
+ 
+
+
+
+
+
+
+
+void edgeDetectionGradiente(PImage img, PVector sizeKernel, float[] kernelX, float[] kernelY, float sogliaEdge)
+{
+    
+    PImage xDer = img.copy();
+    PImage yDer = img.copy();
+    convoluzione(xDer,sizeKernel,kernelX,sogliaEdge);
+    convoluzione(yDer,sizeKernel,kernelY,sogliaEdge);
+    
+    img.loadPixels();
+    for(int i=(int)(sizeKernel.y /2.0); i<= img.height - (sizeKernel.y /2.0);i++)
+     {
+         for(int j=(int)(sizeKernel.x /2.0); j<=  img.width - (int)(sizeKernel.x /2.0);j++) 
+         {
+               float t = red(xDer.get(j,i));  
+               float t2 = red(yDer.get(j,i));
+               
+               float vToSet = sqrt( t*t + t2*t2);
+               vToSet = abs(vToSet) > sogliaEdge ? abs(vToSet) : .0 ;
+               img.pixels[i*img.width + j] = color(vToSet,vToSet,vToSet); //...BUT if we do not updatePixels() we still have the old values in img.get(x,y)
+              
+         }
+     }
+     img.updatePixels();
+    
+}
+
+void convoluzione(PImage img, PVector sizeKernel,float[] kernel,float soglia)
+{
+   img.loadPixels();
+   
+   for(int i=(int)(sizeKernel.y /2.0); i<= img.height - (sizeKernel.y /2.0);i++)
+   {
+       for(int j=(int)(sizeKernel.x /2.0); j<=  img.width - (int)(sizeKernel.x /2.0);j++) 
+       {
+             float t = 0;  
+             
+             for(int ii= - (int)(sizeKernel.y /2.0) ;ii<= (int)(sizeKernel.y /2.0);ii++)
+             {
+                for(int jj=- (int)(sizeKernel.x /2.0);jj<=(int)(sizeKernel.x /2.0);jj++)
+                {
+                    t += red(img.get(j+jj + (int)(sizeKernel.x /2.0) , i+ii + (int)(sizeKernel.y /2.0))) * kernel[((ii+ (int)(sizeKernel.y /2.0))*(int)sizeKernel.x+ jj + (int)(sizeKernel.x /2.0)  )];
+                    
+                }
+             }
+             float vToSet = t; 
+             vToSet = abs(vToSet) > soglia ? abs(vToSet) : .0 ;
+             img.pixels[i*img.width + j] = color(vToSet,vToSet,vToSet); //...BUT if we do not updatePixels() we still have the old values in img.get(x,y)
+            
+       }
+   }
+   img.updatePixels(); //in this way we flush from img.pixels[] to > img
+   
+}
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 void mouseDragged()
