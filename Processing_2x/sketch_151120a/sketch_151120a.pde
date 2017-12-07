@@ -1,32 +1,6 @@
-//-------------------togliere, per la gif
-
-int cont = 0;
-int frames = 0;
-boolean startRec = false;
-int xPlayer = 0;
-int yPlayer = 0;
-
-void keyPressed()
-{
-   if(keyCode == UP)
-   {
-      yPlayer+=10;
-   }
-   if(keyCode == DOWN)
-   {
-      yPlayer-=10;
-   } 
-}
-//-----------
-
-
 Addendo angle = new Addendo(0.0f); //questo è il parametro
-
 Funzione formulaPerX, formulaPerY;
 //float angle = 0;
-PImage img;
-int bonusAlpha = 0;
-
 
 float yMaxSpost = 100;
 float xMaxSpost = 100;
@@ -53,10 +27,6 @@ Funzione[] funzioniPerY = new Funzione[]{
 
 void setup()
 {
-  //gifExport = new GifMaker(this,"exported.gif",300);
-  //gifExport.setRepeat(0);
-  img=loadImage("C:/Users/davide/Desktop/imgtony.jpg");
-  imageMode(CENTER);
   size(800,800,OPENGL);
   //hint(DISABLE_OPTIMIZED_STROKE);
 
@@ -75,21 +45,17 @@ void setup()
   }
    stroke(255);  
    rectMode(CENTER);
-   ellipseMode(CENTER);
   
    
 }
 
 void draw()
-
 {
-  
-  cont++;
   background(0);
   noFill();
   pushMatrix();
   PVector c = guide[0];
-  translate(centroVista.x,centroVista.y+yPlayer,centroVista.z );
+  translate(centroVista.x,centroVista.y,centroVista.z );
 
   //------------------------------------------
   float a = - guide[1].z + guide[0].z;
@@ -110,24 +76,6 @@ void draw()
       //System.out.println(alpha);
       //box(100,100,1);
       rect(0,0,200,200);
-      
-      //------------------------------
-      /*
-      beginShape();
-      fill(255, 255, 255, 20);
-      texture(img);
-      vertex(-100,-100,0,0,0);
-      vertex(100,-100,0,img.width,0);
-      vertex(100,100,0,img.width,img.height);
-      vertex(-100,100,0,0,img.height);
-      endShape();
-      */
-      //------------------------------
-      //tint(255,255.0f * ((float)i/guide.length) + ((bonusAlpha++)/5000)%255 );
-      
-      //image(img,0,0,200,200);
-      noStroke();
-      ellipse(0,0,50,50);
       //sphere(50);
     popMatrix();
       
@@ -135,9 +83,6 @@ void draw()
   aggiungiPuntoGuida();
   
   popMatrix();
-  
-  if(cont % 5 == 0)
-    saveFrame("pics/out-#####.png");
 }
 
 void aggiungiPuntoGuida()
@@ -247,3 +192,6 @@ class Potenza  extends Funzione
   
   }
 }
+
+
+
